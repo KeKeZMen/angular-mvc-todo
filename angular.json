@@ -41,7 +41,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/andular-mvc-todo",
+            "outputPath": "dist/angular-mvc-todo",
             "index": "index.html",
             "browser": "src/index.ts",
             "polyfills": ["zone.js"],
@@ -83,10 +83,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "todo-mvc:build:production"
+              "buildTarget": "angular-mvc-todo:build:production"
             },
             "development": {
-              "buildTarget": "todo-mvc:build:development"
+              "buildTarget": "angular-mvc-todo:build:development"
             }
           },
           "defaultConfiguration": "development"
