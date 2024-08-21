@@ -1,0 +1,22 @@
+<div class="tasks-column">
+  <input
+    *ngIf="showAllTaskToogle"
+    type="checkbox"
+    class="tasks-column__toggle-all"
+    [(ngModel)]="toogledAllTask"
+    (change)="toggleAll()"
+  />
+  <div *ngFor="let task of filteredTasks$ | async">
+    <app-task
+      [task]="task"
+      (changeStatus)="onStatusChange($event)"
+      (delete)="onDelete($event)"
+      (taskUpdated)="updateTask($event)"
+    />
+  </div>
+  <div>
+    <ng-content select=".tasks-count" />
+    <ng-content select="nav" />
+    <ng-content select=".clear-completed" />
+  </div>
+</div>
