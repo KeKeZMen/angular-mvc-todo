@@ -6,15 +6,15 @@ import { BehaviorSubject, map } from 'rxjs';
   providedIn: 'root',
 })
 export class TaskService {
-  private _tasks: Task[] = [];
-  private _tasks$ = new BehaviorSubject<Task[]>([]);
-  public tasks$ = this._tasks$.asObservable();
+  private tasks: Task[] = [];
+  private tasksSubject$ = new BehaviorSubject<Task[]>([]);
+  public tasksObservable$ = this.tasksSubject$.asObservable();
 
   private _isAllTasksCompleted$ = new BehaviorSubject<boolean>(false);
   public isAllTasksCompleted$ = this._isAllTasksCompleted$.asObservable();
 
   public createTask(text: string) {
-    this._tasks.push({
+    this.tasks.push({
       id: Date.now().toString(),
       text,
       status: TaskStatus.ACTIVE,
@@ -22,11 +22,11 @@ export class TaskService {
 
     this._isAllTasksCompleted$.next(false);
 
-    this._tasks$.next(this._tasks);
+    this.tasksSubject$.next(this.tasks);
   }
 
   public getTasks(status: TaskStatus | 'ALL') {
-    return this.tasks$.pipe(
+    return this.tasksObservable$.pipe(
       map((tasks) =>
         status === 'ALL'
           ? tasks
@@ -36,26 +36,25 @@ export class TaskService {
   }
 
   public updateTaskText(taskId: string, text: string) {
-    this._tasks[this._tasks.findIndex((task) => task.id === taskId)].text =
-      text;
-    this._tasks$.next(this._tasks);
+    this.tasks[this.tasks.findIndex((task) => task.id === taskId)].text = text;
+    this.tasksSubject$.next(this.tasks);
   }
 
   public changeTaskStatus(taskId: string) {
-    const taskIndex = this._tasks.findIndex((task) => task.id === taskId);
-    this._tasks[taskIndex].status == TaskStatus.ACTIVE
-      ? (this._tasks[taskIndex].status = TaskStatus.COMPLETED)
-      : (this._tasks[taskIndex].status = TaskStatus.ACTIVE);
+    const taskIndex = this.tasks.findIndex((task) => task.id === taskId);
+    this.tasks[taskIndex].status == TaskStatus.ACTIVE
+      ? (this.tasks[taskIndex].status = TaskStatus.COMPLETED)
+      : (this.tasks[taskIndex].status = TaskStatus.ACTIVE);
 
-    if (this._tasks.some((task) => task.status === TaskStatus.ACTIVE))
+    if (this.tasks.some((task) => task.status === TaskStatus.ACTIVE))
       this._isAllTasksCompleted$.next(false);
     else this._isAllTasksCompleted$.next(true);
 
-    this._tasks$.next(this._tasks);
+    this.tasksSubject$.next(this.tasks);
   }
 
   public toggleAllTasks() {
-    this._tasks = this._tasks.map((task) => ({
+    this.tasks = this.tasks.map((task) => ({
       id: task.id,
       status: this._isAllTasksCompleted$.value
         ? TaskStatus.ACTIVE
@@ -65,23 +64,23 @@ export class TaskService {
 
     this._isAllTasksCompleted$.next(!this._isAllTasksCompleted$.value);
 
-    this._tasks$.next(this._tasks);
+    this.tasksSubject$.next(this.tasks);
   }
 
   public removeTask(taskId: string) {
-    this._tasks = this._tasks.filter((task) => task.id !== taskId);
+    this.tasks = this.tasks.filter((task) => task.id !== taskId);
 
-    if (this._tasks.every((task) => task.status === TaskStatus.COMPLETED))
+    if (this.tasks.every((task) => task.status === TaskStatus.COMPLETED))
       this._isAllTasksCompleted$.next(true);
 
-    this._tasks$.next(this._tasks);
+    this.tasksSubject$.next(this.tasks);
   }
 
   public removeCompletedTasks() {
-    this._tasks = this._tasks.filter(
+    this.tasks = this.tasks.filter(
       (task) => task.status !== TaskStatus.COMPLETED
     );
-    this._tasks$.next(this._tasks);
+    this.tasksSubject$.next(this.tasks);
     this._isAllTasksCompleted$.next(false);
   }
 }

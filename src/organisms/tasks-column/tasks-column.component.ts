@@ -11,8 +11,8 @@ import { Observable, Subscription } from 'rxjs';
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {
   public filteredTasks$ = new Observable<Task[]>();
-  private _filteredTasksSubscription = new Subscription();
-  private _isAllTasksCompletedSubscription = new Subscription();
+  private filteredTasksSubscription = new Subscription();
+  private isAllTasksCompletedSubscription = new Subscription();
   public toogledAllTask: boolean = false;
   public showAllTaskToogle: boolean = true;
 
@@ -28,14 +28,14 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
 
       this.filteredTasks$ = this.taskService.getTasks(status);
 
-      this._filteredTasksSubscription = this.filteredTasks$.subscribe(
+      this.filteredTasksSubscription = this.filteredTasks$.subscribe(
         (tasks) => {
           this.showAllTaskToogle = tasks.length > 0;
         }
       );
     });
 
-    this._isAllTasksCompletedSubscription =
+    this.isAllTasksCompletedSubscription =
       this.taskService.isAllTasksCompleted$.subscribe(
         (isAllTasksCompleted) => (this.toogledAllTask = isAllTasksCompleted)
       );
@@ -62,7 +62,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._filteredTasksSubscription.unsubscribe();
-    this._isAllTasksCompletedSubscription.unsubscribe();
+    this.filteredTasksSubscription.unsubscribe();
+    this.isAllTasksCompletedSubscription.unsubscribe();
   }
 }
