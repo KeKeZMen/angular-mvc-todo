@@ -1,0 +1,55 @@
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
+import { ITask, TaskStatus } from '@models';
+
+@Component({
+  selector: 'app-task',
+  templateUrl: './task.component.html',
+  styleUrl: './task.component.css',
+  outputs: ['changeStatus', 'delete', 'taskUpdated'],
+})
+export class TaskComponent implements OnChanges {
+  @Input() task!: ITask;
+
+  @Output() changeStatus = new EventEmitter<string>();
+  public isTaskDone: boolean = false;
+  onStatusChange() {
+    this.changeStatus.emit(this.task.id);
+  }
+
+  @Output() delete = new EventEmitter<string>();
+  onDelete() {
+    this.delete.emit(this.task.id);
+  }
+
+  @Output() taskUpdated = new EventEmitter<ITask>();
+  isEditing: boolean = false;
+  editedTaskText: string = '';
+  edit() {
+    this.isEditing = true;
+    this.editedTaskText = this.task.text;
+  }
+
+  save() {
+    if (this.editedTaskText.trim()) {
+      this.task.text = this.editedTaskText;
+      this.taskUpdated.emit(this.task);
+    }
+    this.isEditing = false;
+  }
+
+  onEnter(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.save();
+    }
+  }
+
+  ngOnChanges(): void {
+    this.isTaskDone = this.task.status === TaskStatus.COMPLETED;
+  }
+}
