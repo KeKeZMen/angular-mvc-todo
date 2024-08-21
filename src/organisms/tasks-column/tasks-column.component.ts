@@ -22,9 +22,11 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      const status: TaskStatus | 'ALL' =
-        ((params['status'] as string).toUpperCase() as TaskStatus) || 'ALL';
+    this.route.paramMap.subscribe((paramMap) => {
+      const paramsStatus = paramMap.get('status');
+      const status = paramsStatus
+        ? (paramsStatus.toUpperCase() as TaskStatus)
+        : 'ALL';
 
       this.filteredTasks$ = this.taskService.getTasks(status);
 
