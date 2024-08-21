@@ -14,17 +14,17 @@ import { Task, TaskStatus } from '@models';
   outputs: ['changeStatus', 'delete', 'taskUpdated'],
 })
 export class TaskComponent implements OnChanges {
-  @Input() task!: Task;
+  @Input({ required: true }) task: Task | undefined;
 
   @Output() changeStatus = new EventEmitter<string>();
   public isTaskDone: boolean = false;
   onStatusChange() {
-    this.changeStatus.emit(this.task.id);
+    this.changeStatus.emit(this.task?.id);
   }
 
   @Output() delete = new EventEmitter<string>();
   onDelete() {
-    this.delete.emit(this.task.id);
+    this.delete.emit(this.task?.id);
   }
 
   @Output() taskUpdated = new EventEmitter<Task>();
@@ -32,12 +32,12 @@ export class TaskComponent implements OnChanges {
   editedTaskText: string = '';
   edit() {
     this.isEditing = true;
-    this.editedTaskText = this.task.text;
+    this.editedTaskText = this.task ? this.task.text : '';
   }
 
   save() {
     if (this.editedTaskText.trim()) {
-      this.task.text = this.editedTaskText;
+      this.task ? (this.task.text = this.editedTaskText) : undefined;
       this.taskUpdated.emit(this.task);
     }
     this.isEditing = false;
@@ -50,6 +50,6 @@ export class TaskComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    this.isTaskDone = this.task.status === TaskStatus.COMPLETED;
+    this.isTaskDone = this.task?.status === TaskStatus.COMPLETED;
   }
 }
