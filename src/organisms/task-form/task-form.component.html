@@ -1,0 +1,10 @@
+<form (keyup)="onSubmit($event)" [formGroup]="createTaskForm" class="task-form">
+  <div class="task-form__container">
+    <input
+      class="task-form__input"
+      type="text"
+      formControlName="text"
+      placeholder="What needs to be done?"
+    />
+  </div>
+</form>
