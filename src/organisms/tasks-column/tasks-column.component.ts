@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ITask, TaskStatus } from '@models';
+import { Task, TaskStatus } from '@models';
 import { TaskService } from '@services';
 import { Observable, Subscription } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { Observable, Subscription } from 'rxjs';
   styleUrl: './tasks-column.component.css',
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {
-  public filteredTasks$ = new Observable<ITask[]>();
+  public filteredTasks$ = new Observable<Task[]>();
   private _filteredTasksSubscription = new Subscription();
   private _isAllTasksCompletedSubscription = new Subscription();
   public toogledAllTask: boolean = false;
@@ -53,7 +53,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
     this.taskService.removeCompletedTasks();
   }
 
-  updateTask(task: ITask) {
+  updateTask(task: Task) {
     this.taskService.updateTaskText(task.id, task.text);
   }
 

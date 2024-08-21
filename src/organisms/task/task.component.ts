@@ -5,7 +5,7 @@ import {
   OnChanges,
   Output,
 } from '@angular/core';
-import { ITask, TaskStatus } from '@models';
+import { Task, TaskStatus } from '@models';
 
 @Component({
   selector: 'app-task',
@@ -14,7 +14,7 @@ import { ITask, TaskStatus } from '@models';
   outputs: ['changeStatus', 'delete', 'taskUpdated'],
 })
 export class TaskComponent implements OnChanges {
-  @Input() task!: ITask;
+  @Input() task!: Task;
 
   @Output() changeStatus = new EventEmitter<string>();
   public isTaskDone: boolean = false;
@@ -27,7 +27,7 @@ export class TaskComponent implements OnChanges {
     this.delete.emit(this.task.id);
   }
 
-  @Output() taskUpdated = new EventEmitter<ITask>();
+  @Output() taskUpdated = new EventEmitter<Task>();
   isEditing: boolean = false;
   editedTaskText: string = '';
   edit() {

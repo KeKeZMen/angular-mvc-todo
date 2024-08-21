@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { ITask, TaskStatus } from '@models';
+import { Task, TaskStatus } from '@models';
 import { BehaviorSubject, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  private _tasks: ITask[] = [];
-  private _tasks$ = new BehaviorSubject<ITask[]>([]);
+  private _tasks: Task[] = [];
+  private _tasks$ = new BehaviorSubject<Task[]>([]);
   public tasks$ = this._tasks$.asObservable();
 
   private _isAllTasksCompleted$ = new BehaviorSubject<boolean>(false);
