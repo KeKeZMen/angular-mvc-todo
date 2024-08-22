@@ -1,7 +1,7 @@
 import { TaskStatus } from '@models';
 
 export const convertToStatus = (str: string): TaskStatus | null => {
-  switch (str) {
+  switch (str.toLowerCase()) {
     case 'active':
       return TaskStatus.ACTIVE;
     case 'completed':
