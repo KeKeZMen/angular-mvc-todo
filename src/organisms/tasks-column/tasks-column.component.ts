@@ -106,7 +106,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.filteredTasksSubscription.unsubscribe();
+    this.tasksSubscription.unsubscribe();
     this.isAllTasksCompletedSubscription.unsubscribe();
   }
 }
