@@ -75,24 +75,34 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
     });
   }
 
-  onStatusChange(taskId: string) {
-    this.taskService.changeTaskStatus(taskId);
+  public changeTaskStatus(taskId: string) {
+    this.filteredTasks$ = this.taskService
+      .changeTaskStatus(taskId)
+      .pipe(switchMap(() => this.getTasksByStatus()));
   }
 
-  onDelete(taskId: string) {
-    this.taskService.removeTask(taskId);
+  public removeTask(taskId: string) {
+    this.filteredTasks$ = this.taskService
+      .removeTask(taskId)
+      .pipe(switchMap(() => this.getTasksByStatus()));
   }
 
-  clearCompleted() {
-    this.taskService.removeCompletedTasks();
+  public updateTaskText(task: Task) {
+    this.filteredTasks$ = this.taskService
+      .updateTaskText(task.id, task.text)
+      .pipe(switchMap(() => this.getTasksByStatus()));
   }
 
-  updateTask(task: Task) {
-    this.taskService.updateTaskText(task.id, task.text);
+  public toggleAllTasks() {
+    this.filteredTasks$ = this.taskService
+      .toggleAllTasks()
+      .pipe(switchMap(() => this.getTasksByStatus()));
   }
 
-  toggleAll() {
-    this.taskService.toggleAllTasks();
+  public removeCompletedTasks() {
+    this.filteredTasks$ = this.taskService
+      .removeCompletedTasks()
+      .pipe(switchMap(() => this.getTasksByStatus()));
   }
 
   ngOnDestroy(): void {
