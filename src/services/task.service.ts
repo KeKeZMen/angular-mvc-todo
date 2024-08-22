@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { Task, TaskStatus } from '@models';
 import { BehaviorSubject, map } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class TaskService {
   private tasksSubject$ = new BehaviorSubject<Task[]>([]);
   public tasks$ = this.tasksSubject$.asObservable();
