@@ -55,13 +55,16 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
         switchMap((paramMap) => {
           const paramsStatus = paramMap.get('status');
 
-      if (paramsStatus) {
-        status = convertToStatus(paramsStatus) ?? 'ALL';
-      }
+          if (paramsStatus) {
+            this.status = convertToStatus(paramsStatus) ?? 'ALL';
+          }
 
-      this.filteredTasks$ = this.taskService.getTasks(status);
+          return (this.filteredTasks$ = this.getTasksByStatus());
+        })
+      )
+      .subscribe();
 
-      this.filteredTasksSubscription = this.filteredTasks$.subscribe(
+    this.filteredTasks$.subscribe(
         (tasks) => {
           this.showAllTaskToogle = tasks.length > 0;
         }
