@@ -8,9 +8,9 @@ import { Subscription } from 'rxjs';
   styleUrl: './tasks-page.component.css',
 })
 export class TasksPageComponent implements OnInit, OnDestroy {
-  public incompletedTaskCount: number = 0;
+  private tasksSubscription = new Subscription();
+
   public tasksCount: number = 0;
-  public tasksSubscription = new Subscription();
 
   constructor(private taskService: TaskService) {}
 
