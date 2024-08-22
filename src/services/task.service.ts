@@ -50,16 +50,27 @@ export class TaskService {
   }
 
   public changeTaskStatus(taskId: string) {
-    const taskIndex = this.tasks.findIndex((task) => task.id === taskId);
-    this.tasks[taskIndex].status == TaskStatus.ACTIVE
-      ? (this.tasks[taskIndex].status = TaskStatus.COMPLETED)
-      : (this.tasks[taskIndex].status = TaskStatus.ACTIVE);
+    this.tasksSubject$.next([
+      ...this.tasksSubject$.value.map((task) => {
+        if (task.id === taskId) {
+          task.status === TaskStatus.ACTIVE
+            ? (task.status = TaskStatus.COMPLETED)
+            : (task.status = TaskStatus.ACTIVE);
+        }
 
-    if (this.tasks.some((task) => task.status === TaskStatus.ACTIVE))
+        return task;
+      }),
+    ]);
+
+    if (
+      this.tasksSubject$.value.some((task) => task.status === TaskStatus.ACTIVE)
+    ) {
       this.isAllTasksCompletedSubject$.next(false);
-    else this.isAllTasksCompletedSubject$.next(true);
+    } else {
+      this.isAllTasksCompletedSubject$.next(true);
+    }
 
-    this.tasksSubject$.next(this.tasks);
+    return this.tasks$;
   }
 
   public toggleAllTasks() {
