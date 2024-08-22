@@ -40,10 +40,20 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((paramMap) => {
-      const paramsStatus = paramMap.get('status');
-      let status: TaskStatus | 'ALL' = 'ALL';
+  private getTasksByStatus() {
+    return this.taskService.getTasks(this.status).pipe(
+      tap((tasks) => {
+        this.hasTasks = tasks.length > 0;
+        this.cdr.markForCheck();
+      })
+    );
+  }
+
+  public ngOnInit(): void {
+    this.tasksSubscription = this.route.paramMap
+      .pipe(
+        switchMap((paramMap) => {
+          const paramsStatus = paramMap.get('status');
 
       if (paramsStatus) {
         status = convertToStatus(paramsStatus) ?? 'ALL';
