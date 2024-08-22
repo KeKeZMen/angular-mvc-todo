@@ -18,8 +18,17 @@
   </div>
 
   <div>
-    <ng-content select=".tasks-count" />
+    <p class="tasks-count">
+      {{ incompletedTaskCount }}
+      {{ incompletedTaskCount === 1 ? "item" : "items" }} left
+    </p>
     <ng-content select="nav" />
-    <ng-content select=".clear-completed" />
+    <button
+      *ngIf="incompletedTaskCount !== tasksCount"
+      class="clear-completed"
+      (click)="removeCompletedTasks()"
+    >
+      Clear completed
+    </button>
   </div>
 </div>
