@@ -19,28 +19,36 @@ export class TaskComponent implements OnChanges {
   @Output() changeStatus = new EventEmitter<string>();
   public isTaskDone: boolean = false;
   onStatusChange() {
-    this.changeStatus.emit(this.task?.id);
+    if (this.task) {
+      this.changeStatus.emit(this.task.id);
+    }
   }
 
   @Output() delete = new EventEmitter<string>();
   onDelete() {
-    this.delete.emit(this.task?.id);
+    if (this.task) {
+      this.delete.emit(this.task.id);
+    }
   }
 
   @Output() taskUpdated = new EventEmitter<Task>();
   isEditing: boolean = false;
   editedTaskText: string = '';
   edit() {
-    this.isEditing = true;
-    this.editedTaskText = this.task ? this.task.text : '';
+    if (this.task) {
+      this.isEditing = true;
+      this.editedTaskText = this.task.text;
+    }
   }
 
   save() {
-    if (this.editedTaskText.trim()) {
-      this.task ? (this.task.text = this.editedTaskText) : undefined;
-      this.taskUpdated.emit(this.task);
+    if (this.task) {
+      if (this.editedTaskText.trim()) {
+        this.task.text = this.editedTaskText;
+        this.taskUpdated.emit(this.task);
+      }
+      this.isEditing = false;
     }
-    this.isEditing = false;
   }
 
   onEnter(event: KeyboardEvent) {
@@ -50,6 +58,8 @@ export class TaskComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    this.isTaskDone = this.task?.status === TaskStatus.COMPLETED;
+    if (this.task) {
+      this.isTaskDone = this.task.status === TaskStatus.COMPLETED;
+    }
   }
 }
