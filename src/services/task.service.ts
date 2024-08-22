@@ -13,15 +13,18 @@ export class TaskService {
   public isAllTasksCompleted$ = this.isAllTasksCompletedSubject$.asObservable();
 
   public createTask(text: string) {
-    this.tasks.push({
-      id: Date.now().toString(),
-      text,
-      status: TaskStatus.ACTIVE,
-    });
-
     this.isAllTasksCompletedSubject$.next(false);
 
-    this.tasksSubject$.next(this.tasks);
+    this.tasksSubject$.next([
+      ...this.tasksSubject$.value,
+      {
+        id: Date.now().toString(),
+        text,
+        status: TaskStatus.ACTIVE,
+      },
+    ]);
+
+    return this.tasks$;
   }
 
   public getTasks(status: TaskStatus | 'ALL') {
