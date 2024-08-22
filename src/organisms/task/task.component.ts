@@ -42,13 +42,12 @@ export class TaskComponent implements OnChanges {
   }
 
   save() {
-    if (this.task) {
-      if (this.editedTaskText.trim()) {
-        this.task.text = this.editedTaskText;
-        this.taskUpdated.emit(this.task);
-      }
-      this.isEditing = false;
+    if (!this.task) return;
+    if (this.editedTaskText.trim()) {
+      this.task.text = this.editedTaskText;
+      this.taskUpdated.emit(this.task);
     }
+    this.isEditing = false;
   }
 
   onEnter(event: KeyboardEvent) {
