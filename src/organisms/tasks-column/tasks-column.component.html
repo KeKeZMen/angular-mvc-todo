@@ -6,14 +6,17 @@
     (change)="toggleAllTasks()"
     [(ngModel)]="toggledAllTasks"
   />
-  <div *ngFor="let task of filteredTasks$ | async">
+  
+  <div>
     <app-task
+      *ngFor="let task of filteredTasks$ | async"
       [task]="task"
-      (changeStatus)="onStatusChange($event)"
-      (delete)="onDelete($event)"
-      (taskUpdated)="updateTask($event)"
+      (changeStatus)="changeTaskStatus($event)"
+      (delete)="removeTask($event)"
+      (taskUpdated)="updateTaskText($event)"
     />
   </div>
+
   <div>
     <ng-content select=".tasks-count" />
     <ng-content select="nav" />
