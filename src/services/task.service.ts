@@ -74,17 +74,20 @@ export class TaskService {
   }
 
   public toggleAllTasks() {
-    this.tasks = this.tasks.map((task) => ({
-      id: task.id,
-      status: this.isAllTasksCompletedSubject$.value
-        ? TaskStatus.ACTIVE
-        : TaskStatus.COMPLETED,
-      text: task.text,
-    }));
+    this.isAllTasksCompletedSubject$.next(
+      !this.isAllTasksCompletedSubject$.value
+    );
 
-    this.isAllTasksCompletedSubject$.next(!this.isAllTasksCompletedSubject$.value);
+    this.tasksSubject$.next([
+      ...this.tasksSubject$.value.map((task) => ({
+        ...task,
+        status: this.isAllTasksCompletedSubject$.value
+          ? TaskStatus.ACTIVE
+          : TaskStatus.COMPLETED,
+      })),
+    ]);
 
-    this.tasksSubject$.next(this.tasks);
+    return this.tasks$;
   }
 
   public removeTask(taskId: string) {
