@@ -68,10 +68,11 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
       this.toggledAllTasks = isToggled;
     });
 
-    this.isAllTasksCompletedSubscription =
-      this.taskService.isAllTasksCompleted$.subscribe(
-        (isAllTasksCompleted) => (this.toogledAllTask = isAllTasksCompleted)
-      );
+    this.taskService.tasks$.subscribe((tasks) => {
+      this.incompletedTaskCount = tasks.filter(
+        (task) => task.status === TaskStatus.ACTIVE
+      ).length;
+    });
   }
 
   onStatusChange(taskId: string) {
