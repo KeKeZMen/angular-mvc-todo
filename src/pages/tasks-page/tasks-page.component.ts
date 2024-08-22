@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { TaskStatus } from '@models';
 import { TaskService } from '@services';
 import { Subscription } from 'rxjs';
 
