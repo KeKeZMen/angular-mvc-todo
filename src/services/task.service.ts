@@ -28,7 +28,7 @@ export class TaskService {
   }
 
   public getTasks(status: TaskStatus | 'ALL') {
-    return this.tasksObservable$.pipe(
+    return this.tasks$.pipe(
       map((tasks) =>
         status === 'ALL'
           ? tasks
