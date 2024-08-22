@@ -80,8 +80,8 @@ export class TaskService {
       ...this.tasksSubject$.value.map((task) => ({
         ...task,
         status: this.isAllTasksCompletedSubject$.value
-          ? TaskStatus.ACTIVE
-          : TaskStatus.COMPLETED,
+          ? TaskStatus.COMPLETED
+          : TaskStatus.ACTIVE,
       })),
     ]);
 
