@@ -1,9 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Task, TaskStatus } from '@models';
 import { TaskService } from '@services';
 import { convertToStatus } from '@utils';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, switchMap, tap, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tasks-column',
