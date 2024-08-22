@@ -1,0 +1,16 @@
+.task {
+  display: flex;
+  align-items: center;
+  position: relative;
+  gap: 12px;
+}
+
+.task__remove {
+  display: none;
+  position: absolute;
+  right: 0;
+}
+
+.task:hover .task__remove {
+  display: block;
+}

@@ -1,0 +1,10 @@
+.tasks-column {
+  position: relative;
+}
+
+.tasks-column__toggle-all {
+  position: absolute;
+  top: -37px;
+  left: 35px;
+  background: #000;
+}

@@ -1,0 +1,30 @@
+<ng-container *ngIf="task; else taskPlaceholder">
+  <div class="task {{ task.status.toLowerCase() }}">
+    <input
+      type="checkbox"
+      class="task__status"
+      [(ngModel)]="isTaskDone"
+      (change)="onStatusChange()"
+    />
+
+    <ng-container *ngIf="isEditing; else taskText">
+      <input
+        class="task__input"
+        type="text"
+        (keyup)="onEnter($event)"
+        (blur)="save()"
+        [(ngModel)]="editedTaskText"
+      />
+    </ng-container>
+
+    <ng-template #taskText>
+      <p (dblclick)="edit()" class="task__text">{{ task.text }}</p>
+    </ng-template>
+
+    <button (click)="onDelete()" class="task__remove">Remove</button>
+  </div>
+</ng-container>
+
+<ng-template #taskPlaceholder>
+  <p class="task__text">Task placeholder</p>
+</ng-template>
