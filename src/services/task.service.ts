@@ -7,7 +7,7 @@ import { BehaviorSubject, map } from 'rxjs';
 })
 export class TaskService {
   private tasksSubject$ = new BehaviorSubject<Task[]>([]);
-  public tasksObservable$ = this.tasksSubject$.asObservable();
+  public tasks$ = this.tasksSubject$.asObservable();
 
   private isAllTasksCompletedSubject$ = new BehaviorSubject<boolean>(false);
   public isAllTasksCompleted$ = this.isAllTasksCompletedSubject$.asObservable();
