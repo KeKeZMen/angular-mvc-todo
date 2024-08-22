@@ -36,7 +36,8 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
 
   constructor(
     private taskService: TaskService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
