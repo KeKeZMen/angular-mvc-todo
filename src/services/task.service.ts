@@ -106,8 +106,11 @@ export class TaskService {
 
   public removeCompletedTasks() {
     this.tasksSubject$.next([
-      ...this.tasksSubject$.value.filter((task) => task),
+      ...this.tasksSubject$.value.filter(
+        (task) => task.status !== TaskStatus.COMPLETED
+      ),
     ]);
+
     this.isAllTasksCompletedSubject$.next(false);
 
     return this.tasks$;
