@@ -38,8 +38,15 @@ export class TaskService {
   }
 
   public updateTaskText(taskId: string, text: string) {
-    this.tasks[this.tasks.findIndex((task) => task.id === taskId)].text = text;
-    this.tasksSubject$.next(this.tasks);
+    this.tasksSubject$.next([
+      ...this.tasksSubject$.value.map((task) => {
+        if (task.id === taskId) task.text = text;
+
+        return task;
+      }),
+    ]);
+
+    return this.tasks$;
   }
 
   public changeTaskStatus(taskId: string) {
