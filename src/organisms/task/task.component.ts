@@ -14,7 +14,7 @@ import { Task, TaskStatus } from '@models';
   outputs: ['changeStatus', 'delete', 'taskUpdated'],
 })
 export class TaskComponent implements OnChanges {
-  @Input({ required: true }) task: Task | undefined;
+  @Input({ required: true }) task?: Task;
 
   @Output() changeStatus = new EventEmitter<string>();
   public isTaskDone: boolean = false;
