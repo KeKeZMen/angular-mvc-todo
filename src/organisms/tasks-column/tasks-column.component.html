@@ -1,10 +1,10 @@
 <div class="tasks-column">
   <input
-    *ngIf="showAllTaskToogle"
+    *ngIf="hasTasks"
     type="checkbox"
     class="tasks-column__toggle-all"
-    [(ngModel)]="toogledAllTask"
-    (change)="toggleAll()"
+    (change)="toggleAllTasks()"
+    [(ngModel)]="toggledAllTasks"
   />
   <div *ngFor="let task of filteredTasks$ | async">
     <app-task
