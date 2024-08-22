@@ -18,7 +18,7 @@ export class TaskFormComponent {
 
   constructor(private taskService: TaskService) {}
 
-  onSubmit($event: KeyboardEvent) {
+  public onSubmit($event: KeyboardEvent) {
     if ($event.key == 'Enter')
       if (this.createTaskForm.valid) {
         this.taskService.createTask(this.createTaskForm.value?.text);
