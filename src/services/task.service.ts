@@ -91,12 +91,18 @@ export class TaskService {
   }
 
   public removeTask(taskId: string) {
-    this.tasks = this.tasks.filter((task) => task.id !== taskId);
+    this.tasksSubject$.next([
+      ...this.tasksSubject$.value.filter((task) => task.id !== taskId),
+    ]);
 
-    if (this.tasks.every((task) => task.status === TaskStatus.COMPLETED))
+    if (
+      this.tasksSubject$.value.every(
+        (task) => task.status === TaskStatus.COMPLETED
+      )
+    )
       this.isAllTasksCompletedSubject$.next(true);
 
-    this.tasksSubject$.next(this.tasks);
+    return this.tasks$;
   }
 
   public removeCompletedTasks() {
