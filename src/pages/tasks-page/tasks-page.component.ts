@@ -15,19 +15,9 @@ export class TasksPageComponent implements OnInit, OnDestroy {
   constructor(private taskService: TaskService) {}
 
   ngOnInit(): void {
-    this.tasksSubscription = this.taskService.tasksObservable$.subscribe(
-      (tasks) => {
-        this.incompletedTaskCount = tasks.filter(
-          (task) => task.status === TaskStatus.ACTIVE
-        ).length;
-
-        this.tasksCount = tasks.length;
-      }
+    this.tasksSubscription = this.taskService.tasks$.subscribe(
+      (tasks) => (this.tasksCount = tasks.length)
     );
-  }
-
-  removeCompleted() {
-    this.taskService.removeCompletedTasks();
   }
 
   ngOnDestroy(): void {
