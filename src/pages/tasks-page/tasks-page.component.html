@@ -6,21 +6,10 @@
   <ng-template #withTasks>
     <app-task-form />
 
-    <app-tasks-column />
+    <app-tasks-column [tasksCount]="tasksCount" />
 
     <div class="tasks__footer">
-      <p class="tasks-count">
-        {{ incompletedTaskCount }}
-        {{ incompletedTaskCount === 1 ? "item" : "items" }} left
-      </p>
       <app-nav />
-      <button
-        *ngIf="incompletedTaskCount !== tasksCount"
-        class="clear-completed"
-        (click)="removeCompleted()"
-      >
-        Clear completed
-      </button>
     </div>
   </ng-template>
 </div>
