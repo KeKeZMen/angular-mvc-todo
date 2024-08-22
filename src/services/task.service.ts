@@ -6,7 +6,6 @@ import { BehaviorSubject, map } from 'rxjs';
   providedIn: 'root',
 })
 export class TaskService {
-  private tasks: Task[] = [];
   private tasksSubject$ = new BehaviorSubject<Task[]>([]);
   public tasksObservable$ = this.tasksSubject$.asObservable();
 
