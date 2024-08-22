@@ -10,8 +10,8 @@ export class TaskService {
   private tasksSubject$ = new BehaviorSubject<Task[]>([]);
   public tasksObservable$ = this.tasksSubject$.asObservable();
 
-  private _isAllTasksCompleted$ = new BehaviorSubject<boolean>(false);
-  public isAllTasksCompleted$ = this._isAllTasksCompleted$.asObservable();
+  private isAllTasksCompletedSubject$ = new BehaviorSubject<boolean>(false);
+  public isAllTasksCompleted$ = this.isAllTasksCompletedSubject$.asObservable();
 
   public createTask(text: string) {
     this.tasks.push({
@@ -20,7 +20,7 @@ export class TaskService {
       status: TaskStatus.ACTIVE,
     });
 
-    this._isAllTasksCompleted$.next(false);
+    this.isAllTasksCompletedSubject$.next(false);
 
     this.tasksSubject$.next(this.tasks);
   }
@@ -47,8 +47,8 @@ export class TaskService {
       : (this.tasks[taskIndex].status = TaskStatus.ACTIVE);
 
     if (this.tasks.some((task) => task.status === TaskStatus.ACTIVE))
-      this._isAllTasksCompleted$.next(false);
-    else this._isAllTasksCompleted$.next(true);
+      this.isAllTasksCompletedSubject$.next(false);
+    else this.isAllTasksCompletedSubject$.next(true);
 
     this.tasksSubject$.next(this.tasks);
   }
@@ -56,13 +56,13 @@ export class TaskService {
   public toggleAllTasks() {
     this.tasks = this.tasks.map((task) => ({
       id: task.id,
-      status: this._isAllTasksCompleted$.value
+      status: this.isAllTasksCompletedSubject$.value
         ? TaskStatus.ACTIVE
         : TaskStatus.COMPLETED,
       text: task.text,
     }));
 
-    this._isAllTasksCompleted$.next(!this._isAllTasksCompleted$.value);
+    this.isAllTasksCompletedSubject$.next(!this.isAllTasksCompletedSubject$.value);
 
     this.tasksSubject$.next(this.tasks);
   }
@@ -71,7 +71,7 @@ export class TaskService {
     this.tasks = this.tasks.filter((task) => task.id !== taskId);
 
     if (this.tasks.every((task) => task.status === TaskStatus.COMPLETED))
-      this._isAllTasksCompleted$.next(true);
+      this.isAllTasksCompletedSubject$.next(true);
 
     this.tasksSubject$.next(this.tasks);
   }
@@ -81,6 +81,6 @@ export class TaskService {
       (task) => task.status !== TaskStatus.COMPLETED
     );
     this.tasksSubject$.next(this.tasks);
-    this._isAllTasksCompleted$.next(false);
+    this.isAllTasksCompletedSubject$.next(false);
   }
 }
