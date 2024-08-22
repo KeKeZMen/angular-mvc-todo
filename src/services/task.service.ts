@@ -97,8 +97,9 @@ export class TaskService {
       this.tasksSubject$.value.every(
         (task) => task.status === TaskStatus.COMPLETED
       )
-    )
+    ) {
       this.isAllTasksCompletedSubject$.next(true);
+    }
 
     return this.tasks$;
   }
