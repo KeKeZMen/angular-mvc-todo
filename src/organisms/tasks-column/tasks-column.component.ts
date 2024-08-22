@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Task, TaskStatus } from '@models';
 import { TaskService } from '@services';
+import { convertToStatus } from '@utils';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
@@ -24,9 +25,11 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.paramMap.subscribe((paramMap) => {
       const paramsStatus = paramMap.get('status');
-      const status = paramsStatus
-        ? (paramsStatus.toUpperCase() as TaskStatus)
-        : 'ALL';
+      let status: TaskStatus | 'ALL' = 'ALL';
+
+      if (paramsStatus) {
+        status = convertToStatus(paramsStatus) ?? 'ALL';
+      }
 
       this.filteredTasks$ = this.taskService.getTasks(status);
 
