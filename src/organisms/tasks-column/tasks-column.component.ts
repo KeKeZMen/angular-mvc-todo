@@ -16,6 +16,7 @@ import { Observable, switchMap, tap, Subscription } from 'rxjs';
   selector: 'app-tasks-column',
   templateUrl: './tasks-column.component.html',
   styleUrl: './tasks-column.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {
   public filteredTasks$ = new Observable<Task[]>();
