@@ -15,7 +15,6 @@ import {
   selector: 'app-tasks-column',
   templateUrl: './tasks-column.component.html',
   styleUrl: './tasks-column.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {
   private statusSubject$ = new BehaviorSubject<TaskStatus | 'ALL'>('ALL');
@@ -31,8 +30,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
 
   constructor(
     private taskService: TaskService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private route: ActivatedRoute
   ) {}
 
   private getTasksByStatus() {
