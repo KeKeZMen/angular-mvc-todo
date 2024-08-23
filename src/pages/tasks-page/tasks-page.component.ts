@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TaskService } from '@services';
-import { Subscription } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tasks-page',
