@@ -19,20 +19,16 @@ import { Observable, switchMap, tap, Subscription } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {
+  private statusSubject$ = new BehaviorSubject<TaskStatus | 'ALL'>('ALL');
+
   public filteredTasks$ = new Observable<Task[]>();
+
+  public hasTasks$ = new Observable<boolean>();
+  public toggledAllTasks$ = new Observable<boolean>();
+
+  public tasksCount: number = 0;
+  public incompletedTasksCount: number = 0;
   private tasksSubscription = new Subscription();
-
-  public hasTasks: boolean = false;
-
-  public toggledAllTasks: boolean = false;
-
-  public status: TaskStatus | 'ALL' = 'ALL';
-
-  private isAllTasksCompletedSubscription = new Subscription();
-
-  @Input({ required: true }) public tasksCount: number = 0;
-
-  public incompletedTaskCount: number = 0;
 
   constructor(
     private taskService: TaskService,

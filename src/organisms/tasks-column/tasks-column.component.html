@@ -1,12 +1,12 @@
 <div class="tasks-column">
   <input
-    *ngIf="hasTasks"
+    *ngIf="hasTasks$ | async"
     type="checkbox"
     class="tasks-column__toggle-all"
     (change)="toggleAllTasks()"
-    [(ngModel)]="toggledAllTasks"
+    [checked]="toggledAllTasks$ | async"
   />
-  
+
   <div>
     <app-task
       *ngFor="let task of filteredTasks$ | async"
@@ -19,12 +19,12 @@
 
   <div>
     <p class="tasks-count">
-      {{ incompletedTaskCount }}
-      {{ incompletedTaskCount === 1 ? "item" : "items" }} left
+      {{ incompletedTasksCount }}
+      {{ incompletedTasksCount === 1 ? "item" : "items" }} left
     </p>
     <ng-content select="nav" />
     <button
-      *ngIf="incompletedTaskCount !== tasksCount"
+      *ngIf="tasksCount !== incompletedTasksCount"
       class="clear-completed"
       (click)="removeCompletedTasks()"
     >
