@@ -60,13 +60,7 @@ export class TaskService {
       }),
     ]);
 
-    if (
-      this.tasksSubject$.value.some((task) => task.status === TaskStatus.ACTIVE)
-    ) {
-      this.isAllTasksCompletedSubject$.next(false);
-    } else {
-      this.isAllTasksCompletedSubject$.next(true);
-    }
+    this.isAllTasksCompletedSubject$.next(this.isAllTasksCompleted());
 
     return this.tasks$;
   }
@@ -93,13 +87,7 @@ export class TaskService {
       ...this.tasksSubject$.value.filter((task) => task.id !== taskId),
     ]);
 
-    if (
-      this.tasksSubject$.value.every(
-        (task) => task.status === TaskStatus.COMPLETED
-      )
-    ) {
-      this.isAllTasksCompletedSubject$.next(true);
-    }
+    this.isAllTasksCompletedSubject$.next(this.isAllTasksCompleted());
 
     return this.tasks$;
   }
