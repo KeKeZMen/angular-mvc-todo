@@ -7,20 +7,14 @@ import { Subscription } from 'rxjs';
   templateUrl: './tasks-page.component.html',
   styleUrl: './tasks-page.component.css',
 })
-export class TasksPageComponent implements OnInit, OnDestroy {
-  private tasksSubscription = new Subscription();
-
-  public tasksCount: number = 0;
+export class TasksPageComponent implements OnInit {
+  public tasksCount$ = new Observable<number>();
 
   constructor(private taskService: TaskService) {}
 
   ngOnInit(): void {
-    this.tasksSubscription = this.taskService.tasks$.subscribe(
-      (tasks) => (this.tasksCount = tasks.length)
+    this.tasksCount$ = this.taskService.tasks$.pipe(
+      map((tasks) => tasks.length)
     );
-  }
-
-  ngOnDestroy(): void {
-    this.tasksSubscription.unsubscribe();
   }
 }
