@@ -34,38 +34,30 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   ) {}
 
   private getTasksByStatus() {
-    return this.taskService.getTasks(this.status).pipe(
-      tap((tasks) => {
-        this.hasTasks = tasks.length > 0;
-        this.cdr.markForCheck();
-      })
+    return this.statusSubject$.pipe(
+      switchMap((status) => this.taskService.getTasks(status))
     );
   }
 
   public ngOnInit(): void {
-    this.tasksSubscription = this.route.paramMap
-      .pipe(
-        switchMap((paramMap) => {
-          const paramsStatus = paramMap.get('status');
+    this.filteredTasks$ = this.route.paramMap.pipe(
+      switchMap((paramMap) => {
+        const paramsStatus = paramMap.get('status');
+        this.statusSubject$.next(convertToStatus(paramsStatus) ?? 'ALL');
+        return this.getTasksByStatus();
+      })
+    );
 
-          if (paramsStatus) {
-            this.status = convertToStatus(paramsStatus) ?? 'ALL';
-          }
-
-          return (this.filteredTasks$ = this.getTasksByStatus());
-        })
-      )
-      .subscribe();
-
-    this.taskService.isAllTasksCompleted$.subscribe((isToggled) => {
-      this.toggledAllTasks = isToggled;
-    });
-
-    this.taskService.tasks$.subscribe((tasks) => {
-      this.incompletedTaskCount = tasks.filter(
+    this.tasksSubscription = this.taskService.tasks$.subscribe((tasks) => {
+      this.tasksCount = tasks.length;
+      this.incompletedTasksCount = tasks.filter(
         (task) => task.status === TaskStatus.ACTIVE
       ).length;
     });
+
+    this.hasTasks$ = this.filteredTasks$.pipe(map((tasks) => tasks.length > 0));
+
+    this.toggledAllTasks$ = this.taskService.isAllTasksCompleted$;
   }
 
   public changeTaskStatus(taskId: string) {
@@ -98,8 +90,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
       .pipe(switchMap(() => this.getTasksByStatus()));
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.tasksSubscription.unsubscribe();
-    this.isAllTasksCompletedSubscription.unsubscribe();
   }
 }
