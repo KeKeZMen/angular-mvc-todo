@@ -2,7 +2,8 @@ import { ChangeDetectorRef } from '@angular/core';
 import { TaskStatus } from '@models';
 import { MonoTypeOperatorFunction, tap } from 'rxjs';
 
-export const convertToStatus = (str: string): TaskStatus | null => {
+export const convertToStatus = (str: string | null): TaskStatus | null => {
+  if (!str) return null;
   switch (str.toLowerCase()) {
     case 'active':
       return TaskStatus.ACTIVE;
