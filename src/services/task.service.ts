@@ -115,4 +115,10 @@ export class TaskService {
 
     return this.tasks$;
   }
+
+  private isAllTasksCompleted(){
+    return this.tasksSubject$.value.every(
+      (task) => task.status === TaskStatus.COMPLETED
+    );
+  }
 }
