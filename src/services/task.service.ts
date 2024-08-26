@@ -60,7 +60,7 @@ export class TaskService {
       }),
     ]);
 
-    this.isAllTasksCompletedSubject$.next(this.isAllTasksCompleted());
+    this.isAllTasksCompletedSubject$.next(this.isAllTasksCompleted);
 
     return this.tasks$;
   }
@@ -87,7 +87,7 @@ export class TaskService {
       ...this.tasksSubject$.value.filter((task) => task.id !== taskId),
     ]);
 
-    this.isAllTasksCompletedSubject$.next(this.isAllTasksCompleted());
+    this.isAllTasksCompletedSubject$.next(this.isAllTasksCompleted);
 
     return this.tasks$;
   }
@@ -104,7 +104,7 @@ export class TaskService {
     return this.tasks$;
   }
 
-  private isAllTasksCompleted(){
+  private get isAllTasksCompleted(){
     return this.tasksSubject$.value.every(
       (task) => task.status === TaskStatus.COMPLETED
     );
