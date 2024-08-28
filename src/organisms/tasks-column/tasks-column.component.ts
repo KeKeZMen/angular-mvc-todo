@@ -26,12 +26,6 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute
   ) {}
 
-  private getTasksByStatus() {
-    return this.statusSubject$.pipe(
-      switchMap((status) => this.taskService.getTasks(status))
-    );
-  }
-
   public ngOnInit(): void {
     this.filteredTasks$ = this.route.paramMap.pipe(
       switchMap((paramMap) => {
