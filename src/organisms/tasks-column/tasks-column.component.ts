@@ -11,7 +11,7 @@ import { Observable, map, Subject, takeUntil, combineLatest } from 'rxjs';
   styleUrl: './tasks-column.component.css',
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {
-  private statusSubject$ = new BehaviorSubject<TaskStatus | 'ALL'>('ALL');
+  private unsubscribe$ = new Subject<boolean>();
 
   public filteredTasks$ = new Observable<Task[]>();
 
@@ -20,7 +20,6 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
 
   public tasksCount: number = 0;
   public incompletedTasksCount: number = 0;
-  private tasksSubscription = new Subscription();
 
   constructor(
     private taskService: TaskService,
@@ -85,6 +84,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.tasksSubscription.unsubscribe();
+    this.unsubscribe$.next(true);
+    this.unsubscribe$.unsubscribe();
   }
 }
