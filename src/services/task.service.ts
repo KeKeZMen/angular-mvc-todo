@@ -60,7 +60,11 @@ export class TaskService {
       }),
     ]);
 
-    this.isAllTasksCompletedSubject$.next(this.isAllTasksCompleted);
+    this.isAllTasksCompletedSubject$.next(
+      this.tasksSubject$.value.every(
+        (task) => task.status === TaskStatus.COMPLETED
+      )
+    );
 
     return this.tasks$;
   }
@@ -87,7 +91,11 @@ export class TaskService {
       ...this.tasksSubject$.value.filter((task) => task.id !== taskId),
     ]);
 
-    this.isAllTasksCompletedSubject$.next(this.isAllTasksCompleted);
+    this.isAllTasksCompletedSubject$.next(
+      this.tasksSubject$.value.every(
+        (task) => task.status === TaskStatus.COMPLETED
+      )
+    );
 
     return this.tasks$;
   }
@@ -102,11 +110,5 @@ export class TaskService {
     this.isAllTasksCompletedSubject$.next(false);
 
     return this.tasks$;
-  }
-
-  private get isAllTasksCompleted(){
-    return this.tasksSubject$.value.every(
-      (task) => task.status === TaskStatus.COMPLETED
-    );
   }
 }
