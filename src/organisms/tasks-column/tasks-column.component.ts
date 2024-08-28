@@ -27,20 +27,17 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
-    this.filteredTasks$ = this.route.paramMap.pipe(
-      switchMap((paramMap) => {
-        const paramsStatus = paramMap.get('status');
-        this.statusSubject$.next(convertToStatus(paramsStatus) ?? 'ALL');
-        return this.getTasksByStatus();
-      })
-    );
+    combineLatest([this.route.paramMap, this.taskService.tasks$])
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(([paramMap, tasks]) => {
+        this.tasksCount = tasks.length;
+        this.incompletedTasksCount = tasks.filter(
+          (task) => task.status === TaskStatus.ACTIVE
+        ).length;
 
-    this.tasksSubscription = this.taskService.tasks$.subscribe((tasks) => {
-      this.tasksCount = tasks.length;
-      this.incompletedTasksCount = tasks.filter(
-        (task) => task.status === TaskStatus.ACTIVE
-      ).length;
-    });
+        const status: TaskStatus | 'ALL' =
+          convertToStatus(paramMap.get('status')) ?? 'ALL';
+        this.filteredTasks$ = this.taskService.getTasks(status);
 
         this.hasTasks$ = this.filteredTasks$.pipe(
           map((tasks) => tasks.length > 0)
