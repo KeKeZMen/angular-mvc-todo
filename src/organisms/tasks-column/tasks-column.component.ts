@@ -16,7 +16,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   public filteredTasks$ = new Observable<Task[]>();
 
   public hasTasks$ = new Observable<boolean>();
-  public toggledAllTasks$ = new Observable<boolean>();
+  public toggledAllTasks = false;
 
   public tasksCount: number = 0;
   public incompletedTasksCount: number = 0;
@@ -48,9 +48,13 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
       ).length;
     });
 
-    this.hasTasks$ = this.filteredTasks$.pipe(map((tasks) => tasks.length > 0));
-
-    this.toggledAllTasks$ = this.taskService.isAllTasksCompleted$;
+        this.hasTasks$ = this.filteredTasks$.pipe(
+          map((tasks) => tasks.length > 0)
+        );
+        this.toggledAllTasks = tasks.every(
+          (task) => task.status === TaskStatus.COMPLETED
+        );
+      });
   }
 
   public changeTaskStatus(taskId: string) {
