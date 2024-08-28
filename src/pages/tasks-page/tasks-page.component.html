@@ -1,26 +1,15 @@
 <div>
-  <ng-container *ngIf="tasksCount < 1; else withTasks">
-    <app-task-form />
-  </ng-container>
-
-  <ng-template #withTasks>
+  <ng-container *ngIf="tasksCount$ | async; else withoutTasks">
     <app-task-form />
 
     <app-tasks-column />
 
     <div class="tasks__footer">
-      <p class="tasks-count">
-        {{ incompletedTaskCount }}
-        {{ incompletedTaskCount === 1 ? "item" : "items" }} left
-      </p>
       <app-nav />
-      <button
-        *ngIf="incompletedTaskCount !== tasksCount"
-        class="clear-completed"
-        (click)="removeCompleted()"
-      >
-        Clear completed
-      </button>
     </div>
+  </ng-container>
+
+  <ng-template #withoutTasks>
+    <app-task-form />
   </ng-template>
 </div>

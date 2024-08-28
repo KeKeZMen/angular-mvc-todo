@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Task, TaskStatus } from '@models';
 import { TaskService } from '@services';
 import { convertToStatus } from '@utils';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, map, Subject, takeUntil, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-tasks-column',
@@ -11,63 +11,65 @@ import { Observable, Subscription } from 'rxjs';
   styleUrl: './tasks-column.component.css',
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {
+  private unsubscribe$ = new Subject<boolean>();
+
   public filteredTasks$ = new Observable<Task[]>();
-  private filteredTasksSubscription = new Subscription();
-  private isAllTasksCompletedSubscription = new Subscription();
-  public toogledAllTask: boolean = false;
-  public showAllTaskToogle: boolean = true;
+
+  public hasTasks$ = new Observable<boolean>();
+  public toggledAllTasks = false;
+
+  public tasksCount: number = 0;
+  public incompletedTasksCount: number = 0;
 
   constructor(
     private taskService: TaskService,
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((paramMap) => {
-      const paramsStatus = paramMap.get('status');
-      let status: TaskStatus | 'ALL' = 'ALL';
+  public ngOnInit(): void {
+    combineLatest([this.route.paramMap, this.taskService.tasks$])
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(([paramMap, tasks]) => {
+        this.tasksCount = tasks.length;
+        this.incompletedTasksCount = tasks.filter(
+          (task) => task.status === TaskStatus.ACTIVE
+        ).length;
 
-      if (paramsStatus) {
-        status = convertToStatus(paramsStatus) ?? 'ALL';
-      }
+        const status: TaskStatus | 'ALL' =
+          convertToStatus(paramMap.get('status')) ?? 'ALL';
+        this.filteredTasks$ = this.taskService.getTasks(status);
 
-      this.filteredTasks$ = this.taskService.getTasks(status);
-
-      this.filteredTasksSubscription = this.filteredTasks$.subscribe(
-        (tasks) => {
-          this.showAllTaskToogle = tasks.length > 0;
-        }
-      );
-    });
-
-    this.isAllTasksCompletedSubscription =
-      this.taskService.isAllTasksCompleted$.subscribe(
-        (isAllTasksCompleted) => (this.toogledAllTask = isAllTasksCompleted)
-      );
+        this.hasTasks$ = this.filteredTasks$.pipe(
+          map((tasks) => tasks.length > 0)
+        );
+        this.toggledAllTasks = tasks.every(
+          (task) => task.status === TaskStatus.COMPLETED
+        );
+      });
   }
 
-  onStatusChange(taskId: string) {
+  public changeTaskStatus(taskId: string) {
     this.taskService.changeTaskStatus(taskId);
   }
 
-  onDelete(taskId: string) {
+  public removeTask(taskId: string) {
     this.taskService.removeTask(taskId);
   }
 
-  clearCompleted() {
-    this.taskService.removeCompletedTasks();
-  }
-
-  updateTask(task: Task) {
+  public updateTaskText(task: Task) {
     this.taskService.updateTaskText(task.id, task.text);
   }
 
-  toggleAll() {
+  public toggleAllTasks() {
     this.taskService.toggleAllTasks();
   }
 
-  ngOnDestroy(): void {
-    this.filteredTasksSubscription.unsubscribe();
-    this.isAllTasksCompletedSubscription.unsubscribe();
+  public removeCompletedTasks() {
+    this.taskService.removeCompletedTasks();
+  }
+
+  public ngOnDestroy(): void {
+    this.unsubscribe$.next(true);
+    this.unsubscribe$.unsubscribe();
   }
 }
