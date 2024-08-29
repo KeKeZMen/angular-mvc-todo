@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TaskService } from '@services';
 
@@ -10,6 +10,7 @@ export interface ICreateTaskForm {
   selector: 'app-task-form',
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskFormComponent {
   public createTaskForm: FormGroup = new FormGroup<ICreateTaskForm>({

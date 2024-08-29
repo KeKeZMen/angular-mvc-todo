@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TaskStatus } from '@models';
 
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavComponent {
   links: string[] = [

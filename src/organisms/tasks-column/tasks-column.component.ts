@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Task, TaskStatus } from '@models';
 import { TaskService } from '@services';
@@ -9,6 +15,7 @@ import { Observable, map, Subject, takeUntil, combineLatest } from 'rxjs';
   selector: 'app-tasks-column',
   templateUrl: './tasks-column.component.html',
   styleUrl: './tasks-column.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<boolean>();
