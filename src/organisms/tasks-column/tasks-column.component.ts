@@ -43,8 +43,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
           (task) => task.status === TaskStatus.ACTIVE
         ).length;
 
-        const status: TaskStatus | 'ALL' =
-          convertToStatus(paramMap.get('status')) ?? 'ALL';
+        const status = convertToStatus(paramMap.get('status')) ?? 'ALL';
         this.filteredTasks$ = this.taskService.getTasks(status);
 
         this.hasTasks$ = this.filteredTasks$.pipe(
