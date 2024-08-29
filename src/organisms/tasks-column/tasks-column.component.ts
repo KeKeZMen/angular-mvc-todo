@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Task, TaskStatus } from '@models';
 import { TaskService } from '@services';
-import { convertToStatus } from '@utils';
+import { convertToStatus, watchChanges } from '@utils';
 import { Observable, map, Subject, takeUntil, combineLatest } from 'rxjs';
 
 @Component({
@@ -35,7 +35,7 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     combineLatest([this.route.paramMap, this.taskService.tasks$])
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntil(this.unsubscribe$), watchChanges(this.cdr))
       .subscribe(([paramMap, tasks]) => {
         this.tasksCount = tasks.length;
         this.incompletedTasksCount = tasks.filter(
