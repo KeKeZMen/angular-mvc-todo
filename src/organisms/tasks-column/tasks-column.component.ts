@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
@@ -8,8 +7,8 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Task, TaskStatus } from '@models';
 import { TaskService } from '@services';
-import { convertToStatus, watchChanges } from '@utils';
-import { Observable, map, Subject, takeUntil, combineLatest } from 'rxjs';
+import { convertToStatus } from '@utils';
+import { Observable, map, Subject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-tasks-column',
@@ -23,36 +22,43 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   public filteredTasks$ = new Observable<Task[]>();
 
   public hasTasks$ = new Observable<boolean>();
-  public toggledAllTasks = false;
+  public toggledAllTasks$ = new Observable<boolean>();
 
-  public tasksCount: number = 0;
-  public incompletedTasksCount: number = 0;
+  public tasksCount$ = new Observable<number>();
+  public incompletedTasksCount$ = new Observable<number>();
 
   constructor(
     private taskService: TaskService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private route: ActivatedRoute
   ) {}
 
   public ngOnInit(): void {
-    combineLatest([this.route.paramMap, this.taskService.tasks$])
-      .pipe(takeUntil(this.unsubscribe$), watchChanges(this.cdr))
-      .subscribe(([paramMap, tasks]) => {
-        this.tasksCount = tasks.length;
-        this.incompletedTasksCount = tasks.filter(
-          (task) => task.status === TaskStatus.ACTIVE
-        ).length;
+    this.filteredTasks$ = this.route.paramMap.pipe(
+      switchMap((paramMap) =>
+        this.taskService.getTasks(
+          convertToStatus(paramMap.get('status')) ?? 'ALL'
+        )
+      )
+    );
 
-        const status = convertToStatus(paramMap.get('status')) ?? 'ALL';
-        this.filteredTasks$ = this.taskService.getTasks(status);
+    this.hasTasks$ = this.filteredTasks$.pipe(map((tasks) => tasks.length > 0));
 
-        this.hasTasks$ = this.filteredTasks$.pipe(
-          map((tasks) => tasks.length > 0)
-        );
-        this.toggledAllTasks = tasks.every(
-          (task) => task.status === TaskStatus.COMPLETED
-        );
-      });
+    this.toggledAllTasks$ = this.taskService.tasks$.pipe(
+      map((tasks) =>
+        tasks.every((task) => task.status === TaskStatus.COMPLETED)
+      )
+    );
+
+    this.tasksCount$ = this.taskService.tasks$.pipe(
+      map((tasks) => tasks.length)
+    );
+
+    this.incompletedTasksCount$ = this.taskService.tasks$.pipe(
+      map(
+        (tasks) =>
+          tasks.filter((task) => task.status === TaskStatus.ACTIVE).length
+      )
+    );
   }
 
   public changeTaskStatus(taskId: string) {
