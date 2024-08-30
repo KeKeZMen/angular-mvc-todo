@@ -14,7 +14,7 @@ import { Observable, map, Subject, takeUntil, combineLatest } from 'rxjs';
 @Component({
   selector: 'app-tasks-column',
   templateUrl: './tasks-column.component.html',
-  styleUrl: './tasks-column.component.css',
+  styleUrls: ['./tasks-column.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksColumnComponent implements OnInit, OnDestroy {

@@ -14,7 +14,7 @@
       (changeStatus)="changeTaskStatus($event)"
       (delete)="removeTask($event)"
       (taskUpdated)="updateTaskText($event)"
-    />
+    ></app-task>
   </div>
 
   <div>
@@ -22,7 +22,7 @@
       {{ incompletedTasksCount }}
       {{ incompletedTasksCount === 1 ? "item" : "items" }} left
     </p>
-    <ng-content select="nav" />
+    <ng-content select="nav"></ng-content>
     <button
       *ngIf="tasksCount !== incompletedTasksCount"
       class="clear-completed"

@@ -9,7 +9,7 @@ export interface ICreateTaskForm {
 @Component({
   selector: 'app-task-form',
   templateUrl: './task-form.component.html',
-  styleUrl: './task-form.component.css',
+  styleUrls: ['./task-form.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskFormComponent {

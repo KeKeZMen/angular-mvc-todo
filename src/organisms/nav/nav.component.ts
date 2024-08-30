@@ -4,7 +4,7 @@ import { TaskStatus } from '@models';
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
-  styleUrl: './nav.component.css',
+  styleUrls: ['./nav.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavComponent {
