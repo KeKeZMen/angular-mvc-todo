@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TaskService } from '@services';
+import { TaskService } from '@task-lib';
 import { map } from 'rxjs';
 
 @Component({
