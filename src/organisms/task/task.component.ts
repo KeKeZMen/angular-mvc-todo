@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -10,11 +11,12 @@ import { Task, TaskStatus } from '@models';
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
-  styleUrl: './task.component.css',
+  styleUrls: ['./task.component.css'],
   outputs: ['changeStatus', 'delete', 'taskUpdated'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskComponent implements OnChanges {
-  @Input({ required: true }) task?: Task;
+  @Input() task?: Task;
 
   @Output() changeStatus = new EventEmitter<string>();
   public isTaskDone: boolean = false;
