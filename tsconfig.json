@@ -21,18 +21,11 @@
     "paths": {
       "@app": ["src/app"],
       "@app/*": ["src/app/*"],
-      "@molecules": ["src/molecules"],
-      "@molecules/*": ["src/molecules/*"],
       "@organisms": ["src/organisms"],
       "@organisms/*": ["src/organisms/*"],
       "@pages": ["src/pages"],
       "@pages/*": ["src/pages/*"],
-      "@services": ["src/services"],
-      "@services/*": ["src/services/*"],
-      "@models": ["src/models"],
-      "@models/*": ["src/models/*"],
-      "@utils": ["src/utils"],
-      "@utils/*": ["src/utils/*"]
+      "@task-lib": ["dist/task-lib"]
     }
   },
   "angularCompilerOptions": {

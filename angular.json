@@ -99,6 +99,29 @@
           "defaultConfiguration": "development"
         }
       }
+    },
+    "task-lib": {
+      "projectType": "library",
+      "root": "projects/task-lib",
+      "sourceRoot": "projects/task-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/task-lib/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/task-lib/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/task-lib/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
     }
   }
 }
