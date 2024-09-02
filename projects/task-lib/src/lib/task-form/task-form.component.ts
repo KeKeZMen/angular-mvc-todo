@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { TaskService } from '@services';
+import { TaskService } from '../task.service';
 
 export interface ICreateTaskForm {
   text: FormControl<string | null>;
