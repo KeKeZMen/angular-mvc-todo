@@ -5,9 +5,9 @@ import {
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Task, TaskStatus } from '@models';
-import { TaskService } from '@services';
-import { convertToStatus } from '@utils';
+import { Task, TaskStatus } from '../models';
+import { TaskService } from '../task.service';
+import { convertToStatus } from '../utils';
 import { Observable, map, Subject, switchMap } from 'rxjs';
 
 @Component({
