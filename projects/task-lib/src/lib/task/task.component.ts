@@ -6,7 +6,7 @@ import {
   OnChanges,
   Output,
 } from '@angular/core';
-import { Task, TaskStatus } from '@models';
+import { Task, TaskStatus } from '../models';
 
 @Component({
   selector: 'app-task',
