@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Task, TaskStatus } from '@models';
+import { Task, TaskStatus } from './models';
 import { BehaviorSubject, map } from 'rxjs';
 
 @Injectable()

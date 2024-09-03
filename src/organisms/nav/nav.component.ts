@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { TaskStatus } from '@models';
+import { TaskStatus } from '@task-lib';
 
 @Component({
   selector: 'app-nav',
