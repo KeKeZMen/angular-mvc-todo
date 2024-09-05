@@ -1,96 +1,85 @@
 import { Injectable } from '@angular/core';
 import { Task, TaskStatus } from './models';
-import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class TaskService {
-  private apiUrl = 'http://localhost:4200/tasks';
-
-  public tasks$ = new Observable<Task[]>();
-
-  private isAllTasksCompletedSubject$ = new BehaviorSubject<boolean>(false);
-  public isAllTasksCompleted$ = this.isAllTasksCompletedSubject$.asObservable();
-
   constructor(private httpClient: HttpClient) {}
 
+  private apiUrl = 'http://localhost:3000/api/tasks';
+
+  private tasksSubject$ = new BehaviorSubject<Task[]>([]);
+  public tasks$ = this.tasksSubject$.asObservable();
+
   public createTask(text: string) {
-    this.tasks$ = this.httpClient.post(this.apiUrl, { text }).pipe(
-      switchMap(() =>
-        this.httpClient.get<Task[]>(this.apiUrl).pipe(
-          tap((tasks) => {
-            this.isAllTasksCompletedSubject$.next(
-              tasks.every((task) => task.status === TaskStatus.COMPLETED)
-            );
-          })
-        )
+    return this.httpClient.post<Task>(this.apiUrl, { text }).pipe(
+      tap((task) =>
+        this.tasksSubject$.next([...this.tasksSubject$.value, task])
+      ),
+      catchError((err) => throwError(() => err))
+    );
+  }
+
+  public loadTasks() {
+    return this.httpClient.get<Task[]>(this.apiUrl).pipe(
+      tap((tasks) => this.tasksSubject$.next(tasks)),
+      catchError((err) => throwError(() => err))
+    );
+  }
+
+  public filterTasks(status: TaskStatus | 'ALL') {
+    return this.tasks$.pipe(
+      map((tasks) =>
+        status === 'ALL'
+          ? tasks
+          : tasks.filter((task) => task.status === status)
       )
     );
-
-    return this.tasks$;
   }
 
-  public getTasks(status: TaskStatus | 'ALL') {
-    this.tasks$ = this.httpClient.get<Task[]>(
-      `${this.apiUrl}?status=${status}`
-    );
-
-    return this.tasks$;
-  }
-
-  public updateTaskText(taskId: string, text: string) {
-    this.tasks$ = this.httpClient
-      .patch(`${this.apiUrl}?id=${taskId}`, { text })
+  public updateTaskText(id: string, text: string) {
+    return this.httpClient
+      .patch<Task[]>(this.apiUrl, { text }, { params: { id } })
       .pipe(
-        switchMap(() => {
-          return this.httpClient.get<Task[]>(this.apiUrl);
-        })
+        tap((tasks) => {
+          this.tasksSubject$.next(tasks);
+        }),
+        catchError((err) => throwError(() => err))
       );
-
-    return this.tasks$;
   }
 
-  public changeTaskStatus(taskId: string) {
-    this.tasks$ = this.httpClient.patch(`${this.apiUrl}?id=${taskId}`, {}).pipe(
-      switchMap(() => {
-        return this.httpClient.get<Task[]>(this.apiUrl).pipe(
-          tap((tasks) => {
-            this.isAllTasksCompletedSubject$.next(
-              tasks.every((task) => task.status === TaskStatus.COMPLETED)
-            );
-          })
-        );
-      })
-    );
-
-    return this.tasks$;
+  public changeTaskStatus(id: string) {
+    return this.httpClient
+      .patch<Task[]>(this.apiUrl, {}, { params: { id } })
+      .pipe(
+        tap((tasks) => this.tasksSubject$.next(tasks)),
+        catchError((err) => throwError(() => err))
+      );
   }
 
-  public removeTask(taskId: string) {
-    this.tasks$ = this.httpClient.delete(`${this.apiUrl}?id=${taskId}`).pipe(
-      switchMap(() => {
-        return this.httpClient.get<Task[]>(this.apiUrl).pipe(
-          tap((tasks) => {
-            this.isAllTasksCompletedSubject$.next(
-              tasks.every((task) => task.status === TaskStatus.COMPLETED)
-            );
-          })
-        );
-      })
+  public toggleAllTasks() {
+    return this.httpClient
+      .patch<Task[]>(this.apiUrl, {}, { params: { all: true } })
+      .pipe(
+        tap((tasks) => this.tasksSubject$.next(tasks)),
+        catchError((err) => throwError(() => err))
+      );
+  }
+
+  public removeTask(id: string) {
+    return this.httpClient.delete<Task[]>(this.apiUrl, { params: { id } }).pipe(
+      tap((tasks) => this.tasksSubject$.next(tasks)),
+      catchError((err) => throwError(() => err))
     );
   }
 
   public removeCompletedTasks() {
-    this.tasks$ = this.httpClient.delete(`${this.apiUrl}?all=true`).pipe(
-      switchMap(() => {
-        return this.httpClient.get<Task[]>(this.apiUrl).pipe(
-          tap(() => {
-            this.isAllTasksCompletedSubject$.next(false);
-          })
-        );
-      })
-    );
-
-    return this.tasks$;
+    return this.httpClient
+      .delete<Task[]>(this.apiUrl, { params: { all: true } })
+      .pipe(
+        tap((tasks) => this.tasksSubject$.next(tasks)),
+        catchError((err) => throwError(() => err))
+      );
   }
 }
