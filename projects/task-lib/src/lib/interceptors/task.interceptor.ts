@@ -19,6 +19,9 @@ export class TaskInterceptor implements HttpInterceptor {
 
     if (url.includes('/tasks')) {
       const tasks: Task[] = JSON.parse(localStorage.getItem('tasks') || '[]');
+      let isAllTasksCompleted = tasks.every(
+        (task) => task.status === TaskStatus.COMPLETED
+      );
 
       switch (method) {
         case 'POST': {
@@ -27,39 +30,41 @@ export class TaskInterceptor implements HttpInterceptor {
             text: req.body.text,
             status: TaskStatus.ACTIVE,
           };
-          tasks.push(newTask);
-          localStorage.setItem('tasks', JSON.stringify(tasks));
-          return of(new HttpResponse({ status: 200 }));
+          isAllTasksCompleted = false;
+          localStorage.setItem('tasks', JSON.stringify([...tasks, newTask]));
+          return of(new HttpResponse({ status: 200, body: newTask }));
         }
 
         case 'GET': {
-          const requestedTasks = tasks.filter(
-            (task) => task.status === req.params.get('status')
-          );
-          return of(new HttpResponse({ status: 200, body: requestedTasks }));
+          return of(new HttpResponse({ status: 200, body: tasks }));
         }
 
         case 'PATCH': {
           const isCompleteAllTasks = req.params.has('all');
+          isAllTasksCompleted = !isAllTasksCompleted;
 
           const updatedTasks = isCompleteAllTasks
-            ? tasks.map((task) => ({ ...task, status: TaskStatus.COMPLETED }))
+            ? tasks.map((task) => ({
+                ...task,
+                status: isAllTasksCompleted
+                  ? TaskStatus.COMPLETED
+                  : TaskStatus.ACTIVE,
+              }))
             : tasks.map((task) => {
                 if (task.id === req.params.get('id')) {
-                  if (req.body.status) {
+                  if (req.body.text) {
+                    task.text = req.body.text;
+                  } else {
                     task.status === TaskStatus.ACTIVE
                       ? (task.status = TaskStatus.COMPLETED)
                       : (task.status = TaskStatus.ACTIVE);
                   }
-
-                  if (req.body.text) {
-                    task.text = req.body.text;
-                  }
                 }
+                return task;
               });
 
           localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-          return of(new HttpResponse({ status: 200 }));
+          return of(new HttpResponse({ status: 200, body: updatedTasks }));
         }
 
         case 'DELETE': {
@@ -69,8 +74,12 @@ export class TaskInterceptor implements HttpInterceptor {
             ? tasks.filter((task) => task.status !== TaskStatus.COMPLETED)
             : tasks.filter((task) => task.id !== req.params.get('id'));
 
+          isAllTasksCompleted = updatedTasks.every(
+            (task) => task.status === TaskStatus.COMPLETED
+          );
+
           localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-          return of(new HttpResponse({ status: 200 }));
+          return of(new HttpResponse({ status: 200, body: updatedTasks }));
         }
       }
     }
