@@ -1,34 +1,44 @@
-<div class="tasks-column">
-  <input
-    *ngIf="hasTasks$ | async"
-    type="checkbox"
-    class="tasks-column__toggle-all"
-    (change)="toggleAllTasks()"
-    [checked]="toggledAllTasks$ | async"
-  />
+<ng-container *ngIf="tasksCount$ | async; else withoutTasks">
+  <div class="tasks-column">
+    <app-task-form></app-task-form>
 
-  <div>
-    <app-task
-      *ngFor="let task of filteredTasks$ | async"
-      [task]="task"
-      (changeStatus)="changeTaskStatus($event)"
-      (delete)="removeTask($event)"
-      (taskUpdated)="updateTaskText($event)"
-    ></app-task>
-  </div>
+    <div class="tasks-column__tasks">
+      <input
+        *ngIf="hasTasks$ | async"
+        type="checkbox"
+        class="tasks-column__toggle-all"
+        (change)="toggleAllTasks()"
+        [checked]="toggledAllTasks$ | async"
+      />
 
-  <div>
-    <p class="tasks-count">
-      {{ incompletedTasksCount$ | async }}
-      {{ (incompletedTasksCount$ | async) === 1 ? "item" : "items" }} left
-    </p>
-    <ng-content select="nav"></ng-content>
-    <button
-      *ngIf="(tasksCount$ | async) !== (incompletedTasksCount$ | async)"
-      class="clear-completed"
-      (click)="removeCompletedTasks()"
-    >
-      Clear completed
-    </button>
+      <app-task
+        *ngFor="let task of filteredTasks$ | async"
+        [task]="task"
+        (changeStatus)="changeTaskStatus($event)"
+        (delete)="removeTask($event)"
+        (taskUpdated)="updateTaskText($event)"
+      ></app-task>
+    </div>
+
+    <div class="tasks-column__footer">
+      <p class="tasks-column__footer__count">
+        {{ incompletedTasksCount$ | async }}
+        {{ (incompletedTasksCount$ | async) === 1 ? "item" : "items" }} left
+      </p>
+
+      <ng-content></ng-content>
+
+      <button
+        *ngIf="(tasksCount$ | async) !== (incompletedTasksCount$ | async)"
+        class="tasks-column__footer__clear-completed"
+        (click)="removeCompletedTasks()"
+      >
+        Clear completed
+      </button>
+    </div>
   </div>
-</div>
+</ng-container>
+
+<ng-template #withoutTasks>
+  <app-task-form></app-task-form>
+</ng-template>

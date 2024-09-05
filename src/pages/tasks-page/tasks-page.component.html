@@ -1,15 +1,3 @@
-<div>
-  <ng-container *ngIf="tasksCount$ | async; else withoutTasks">
-    <app-task-form></app-task-form>
-
-    <app-tasks-column></app-tasks-column>
-
-    <div class="tasks__footer">
-      <app-nav></app-nav>
-    </div>
-  </ng-container>
-
-  <ng-template #withoutTasks>
-    <app-task-form></app-task-form>
-  </ng-template>
-</div>
+<app-tasks-column>
+  <app-nav></app-nav>
+</app-tasks-column>

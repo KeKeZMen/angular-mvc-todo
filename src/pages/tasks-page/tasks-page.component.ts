@@ -1,6 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TaskService } from '@task-lib';
-import { map } from 'rxjs';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-tasks-page',
@@ -8,8 +6,4 @@ import { map } from 'rxjs';
   styleUrls: ['./tasks-page.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TasksPageComponent {
-  public tasksCount$ = inject(TaskService).tasks$.pipe(
-    map((tasks) => tasks.length)
-  );
-}
+export class TasksPageComponent {}

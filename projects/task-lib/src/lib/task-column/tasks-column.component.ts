@@ -8,7 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Task, TaskStatus } from '../models';
 import { TaskService } from '../task.service';
 import { convertToStatus } from '../utils';
-import { Observable, map, Subject, switchMap } from 'rxjs';
+import { Observable, map, Subject, switchMap, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-tasks-column',
@@ -33,9 +33,11 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
+    this.taskService.loadTasks().pipe(takeUntil(this.unsubscribe$)).subscribe();
+
     this.filteredTasks$ = this.route.paramMap.pipe(
       switchMap((paramMap) =>
-        this.taskService.getTasks(
+        this.taskService.filterTasks(
           convertToStatus(paramMap.get('status')) ?? 'ALL'
         )
       )
@@ -62,23 +64,38 @@ export class TasksColumnComponent implements OnInit, OnDestroy {
   }
 
   public changeTaskStatus(taskId: string) {
-    this.taskService.changeTaskStatus(taskId);
+    this.taskService
+      .changeTaskStatus(taskId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => console.log('Статус задачи обновлен'));
   }
 
   public removeTask(taskId: string) {
-    this.taskService.removeTask(taskId);
+    this.taskService
+      .removeTask(taskId)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => console.log('Задача удалена'));
   }
 
   public updateTaskText(task: Task) {
-    this.taskService.updateTaskText(task.id, task.text);
+    this.taskService
+      .updateTaskText(task.id, task.text)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => console.log('Текст задачи обновлен'));
   }
 
   public toggleAllTasks() {
-    this.taskService.toggleAllTasks();
+    this.taskService
+      .toggleAllTasks()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => console.log('Статус задач переключен'));
   }
 
   public removeCompletedTasks() {
-    this.taskService.removeCompletedTasks();
+    this.taskService
+      .removeCompletedTasks()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => console.log('Все завершенные задачи удалены'));
   }
 
   public ngOnDestroy(): void {
