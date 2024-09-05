@@ -1,31 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Task, TaskStatus } from './models';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, catchError, map, tap, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class TaskService {
+  constructor(private httpClient: HttpClient) {}
+
+  private apiUrl = 'http://localhost:3000/api/tasks';
+
   private tasksSubject$ = new BehaviorSubject<Task[]>([]);
   public tasks$ = this.tasksSubject$.asObservable();
 
-  private isAllTasksCompletedSubject$ = new BehaviorSubject<boolean>(false);
-  public isAllTasksCompleted$ = this.isAllTasksCompletedSubject$.asObservable();
-
   public createTask(text: string) {
-    this.isAllTasksCompletedSubject$.next(false);
-
-    this.tasksSubject$.next([
-      ...this.tasksSubject$.value,
-      {
-        id: Date.now().toString(),
-        text,
-        status: TaskStatus.ACTIVE,
-      },
-    ]);
-
-    return this.tasks$;
+    return this.httpClient.post<Task>(this.apiUrl, { text }).pipe(
+      tap((task) =>
+        this.tasksSubject$.next([...this.tasksSubject$.value, task])
+      ),
+      catchError((err) => throwError(() => err))
+    );
   }
 
-  public getTasks(status: TaskStatus | 'ALL') {
+  public loadTasks() {
+    return this.httpClient.get<Task[]>(this.apiUrl).pipe(
+      tap((tasks) => this.tasksSubject$.next(tasks)),
+      catchError((err) => throwError(() => err))
+    );
+  }
+
+  public filterTasks(status: TaskStatus | 'ALL') {
     return this.tasks$.pipe(
       map((tasks) =>
         status === 'ALL'
@@ -35,80 +38,48 @@ export class TaskService {
     );
   }
 
-  public updateTaskText(taskId: string, text: string) {
-    this.tasksSubject$.next([
-      ...this.tasksSubject$.value.map((task) => {
-        if (task.id === taskId) task.text = text;
-
-        return task;
-      }),
-    ]);
-
-    return this.tasks$;
+  public updateTaskText(id: string, text: string) {
+    return this.httpClient
+      .patch<Task[]>(this.apiUrl, { text }, { params: { id } })
+      .pipe(
+        tap((tasks) => {
+          this.tasksSubject$.next(tasks);
+        }),
+        catchError((err) => throwError(() => err))
+      );
   }
 
-  public changeTaskStatus(taskId: string) {
-    this.tasksSubject$.next([
-      ...this.tasksSubject$.value.map((task) => {
-        if (task.id === taskId) {
-          task.status === TaskStatus.ACTIVE
-            ? (task.status = TaskStatus.COMPLETED)
-            : (task.status = TaskStatus.ACTIVE);
-        }
-
-        return task;
-      }),
-    ]);
-
-    this.isAllTasksCompletedSubject$.next(
-      this.tasksSubject$.value.every(
-        (task) => task.status === TaskStatus.COMPLETED
-      )
-    );
-
-    return this.tasks$;
+  public changeTaskStatus(id: string) {
+    return this.httpClient
+      .patch<Task[]>(this.apiUrl, {}, { params: { id } })
+      .pipe(
+        tap((tasks) => this.tasksSubject$.next(tasks)),
+        catchError((err) => throwError(() => err))
+      );
   }
 
   public toggleAllTasks() {
-    this.isAllTasksCompletedSubject$.next(
-      !this.isAllTasksCompletedSubject$.value
-    );
-
-    this.tasksSubject$.next([
-      ...this.tasksSubject$.value.map((task) => ({
-        ...task,
-        status: this.isAllTasksCompletedSubject$.value
-          ? TaskStatus.COMPLETED
-          : TaskStatus.ACTIVE,
-      })),
-    ]);
-
-    return this.tasks$;
+    return this.httpClient
+      .patch<Task[]>(this.apiUrl, {}, { params: { all: true } })
+      .pipe(
+        tap((tasks) => this.tasksSubject$.next(tasks)),
+        catchError((err) => throwError(() => err))
+      );
   }
 
-  public removeTask(taskId: string) {
-    this.tasksSubject$.next([
-      ...this.tasksSubject$.value.filter((task) => task.id !== taskId),
-    ]);
-
-    this.isAllTasksCompletedSubject$.next(
-      this.tasksSubject$.value.every(
-        (task) => task.status === TaskStatus.COMPLETED
-      )
+  public removeTask(id: string) {
+    return this.httpClient.delete<Task[]>(this.apiUrl, { params: { id } }).pipe(
+      tap((tasks) => this.tasksSubject$.next(tasks)),
+      catchError((err) => throwError(() => err))
     );
-
-    return this.tasks$;
   }
 
   public removeCompletedTasks() {
-    this.tasksSubject$.next([
-      ...this.tasksSubject$.value.filter(
-        (task) => task.status !== TaskStatus.COMPLETED
-      ),
-    ]);
-
-    this.isAllTasksCompletedSubject$.next(false);
-
-    return this.tasks$;
+    return this.httpClient
+      .delete<Task[]>(this.apiUrl, { params: { all: true } })
+      .pipe(
+        tap((tasks) => this.tasksSubject$.next(tasks)),
+        catchError((err) => throwError(() => err))
+      );
   }
 }
